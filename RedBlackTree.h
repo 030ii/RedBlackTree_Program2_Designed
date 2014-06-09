@@ -28,6 +28,7 @@ Member *uncle(Member *Node);		/* 노드의 부모의 형제 노드 */
 Member *sibling(Member *Node);		/* 노드의 형제 노드 */
 
 void insertNode(Tree *RBT, Member *Node);	/* 트리에 노드 삽입 */
+void insertNodeForName(Tree *RBT, Member *Node);/* 트리에 노드 삽입 - 이름 기준 */
 void treeFixUp(Tree *RBT, Member *Node);	/* 트리 균형 수정 */
 void deleteNode(Tree *RBT, Member *Node);	/* 트리 노드 삭제 */
 void treeDelFixUp(Tree *RBT, Member *Node);	/* 삭제시 트리 균형 수정*/
@@ -40,5 +41,6 @@ void transPlant(Tree *RBT, Member *Node, Member *Successor);
 void printTree(Tree *RBT, Member *Node);	/* 트리 노드 출력 */
 void fprintTree(FILE *fp, Tree *RBT, Member *Node);	/* 트리 노드 파일 출력 */
 Member *searchValue(Tree *RBT, Member *Node, int id); /* 노드 검색 */
+Member *searchValueForName(Tree *RBT, Member *Node, char *name); /* 노드 검색 */
 
 #endif

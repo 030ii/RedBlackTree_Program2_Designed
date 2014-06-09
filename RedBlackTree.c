@@ -69,6 +69,44 @@ void insertNode(Tree *RBT, Member *Node)
 	return;
 }
 
+/* 새로운 노드 삽입 - name 기준 */
+void insertNodeForName(Tree *RBT, Member *Node)
+{
+	Member *curNode, *tempNode;
+
+	// 현재 노드가 루트노드일 경우
+	if (RBT->root == RBT->NIL){
+		RBT->root = Node;
+		Node->parent = NULL;
+		return;
+	}
+
+	// 현재 노드가 들어갈 위치를 찾아 NIL노드와 교체
+	curNode = RBT->root;
+	tempNode = curNode;
+	while (curNode != RBT->NIL)
+	{
+		tempNode = curNode;
+
+		if (0 < strcmp(curNode->name, Node->name))
+			curNode = tempNode->left;
+		else
+			curNode = tempNode->right;
+	}
+
+	Node->parent = tempNode;
+	if (0 < strcmp(tempNode->name, Node->name))
+	{
+		tempNode->left = Node;
+	}
+	else
+	{
+		tempNode->right = Node;
+	}
+
+	return;
+}
+
 /* 레드블랙트리 오류 수정 */
 
 void treeFixUp(Tree *RBT, Member *Node)
@@ -83,7 +121,7 @@ void treeFixUp(Tree *RBT, Member *Node)
 		Node->color = BLACK;
 		return;
 	}
-	// case2 : 삽입한 노드가 루트 노드의 자식 노드인 경우
+	// case2 : 삽입한 노드의 부모가 검은색인 경우
 	else if (p->color == BLACK)
 	{
 		return;
@@ -104,7 +142,7 @@ void treeFixUp(Tree *RBT, Member *Node)
 			{
 				rotateLeft(RBT, Node);
 				Node = p;
-			}
+			} 
 
 			p = Node->parent;
 			u = uncle(Node);
@@ -112,6 +150,7 @@ void treeFixUp(Tree *RBT, Member *Node)
 
 			// case 3-1-2 : 현재 노드와 부모 노드의 방향이 직선인 경우
 			p->color = BLACK;
+			g->color = RED;
 			if (p == g->left)
 			{
 				rotateRight(RBT, p);
@@ -134,8 +173,6 @@ void treeFixUp(Tree *RBT, Member *Node)
 	return;
 }
 
-
-
 // 트리 노드 삭제 
 void deleteNode(Tree *RBT, Member *Node)
 {
@@ -148,16 +185,8 @@ void deleteNode(Tree *RBT, Member *Node)
 	// 왼쪽노드 없는 경우
 	if (left == RBT->NIL)
 	{
-		//if (right != RBT->NIL)
-		//{
 		fixupNode = right;
 		transPlant(RBT, Node, right);
-		//}
-		// 오른쪽 노드마저 없는 경우
-		//else
-		//{
-
-		//}
 	}
 	// 오른쪽노드 없는 경우
 	else if (right == RBT->NIL)
@@ -397,7 +426,6 @@ void transPlant(Tree *RBT, Member *Node, Member *Successor)
 	{
 		Node->parent->right = Successor;
 	}
-
 	Successor->parent = Node->parent;
 }
 
@@ -408,14 +436,13 @@ void printTree(Tree *RBT, Member *Node)
 	{
 		printTree(RBT, Node->left);
 	}
-	printf("%d\t\t%s\t\t%s\t\t%d\n", Node->id, Node->name, Node->addr, Node->color);
+	printf("%d\t\t%s\t\t%s\t\t%s\n", Node->id, Node->name, Node->addr, Node->phone);
 	if (Node->right != RBT->NIL)
 	{
 		printTree(RBT, Node->right);
 	}
 	return;
 }
-
 
 void fprintTree(FILE *fp, Tree *RBT, Member *Node)
 {
@@ -436,6 +463,22 @@ Member *searchValue(Tree *RBT, Member *Node, int id)
 	while (Node != RBT->NIL && Node->id != id)
 	{
 		if (Node->id > id)
+			Node = Node->left;
+		else
+			Node = Node->right;
+	}
+
+	if (Node == RBT->NIL)
+		Node = NULL;
+
+	return Node;
+}
+
+Member *searchValueForName(Tree *RBT, Member *Node, char *name)
+{
+	while (Node != RBT->NIL && strcmp(Node->name,name)!=0)
+	{
+		if (0<strcmp(Node->name, name))
 			Node = Node->left;
 		else
 			Node = Node->right;

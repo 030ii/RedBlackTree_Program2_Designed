@@ -13,6 +13,7 @@ int main(void)
 {
 	FILE *fp;
 	Tree *RBT = NULL;
+	Tree *RBT_name = NULL;
 	int input;
 
 	PlaySound(TEXT("start.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP | SND_NODEFAULT);
@@ -28,8 +29,10 @@ int main(void)
 	}
 
 	RBT = createRBT();
-	roadData(fp, RBT);
+	RBT_name = createRBT();
+	roadData(fp, RBT, RBT_name);
 
+	//return;
 	while (1)
 	{
 		system("cls");
@@ -56,10 +59,13 @@ int main(void)
 			menu1_member_view(RBT);
 			break;
 		case 2:
-			menu2_member_add(RBT);
+			menu2_member_add(RBT,RBT_name);
+			break;
+		case 3:
+			menu3_member_modify(RBT, RBT_name);
 			break;
 		case 4:
-			menu4_member_delete(RBT);
+			menu4_member_delete(RBT,RBT_name);
 			break;
 		case 6:
 			menu6_data_save(RBT);

@@ -27,9 +27,9 @@ void textColor(char txt[], int color)
 }
 
 // 텍스트 문서에서 데이터 로드
-void roadData(FILE *fp, Tree *RBT)
+void roadData(FILE *fp, Tree *RBT, Tree *RBT2)
 {
-	Member *curNode = NULL;
+	Member *curNode = NULL, *curNode2 = NULL;
 	char buff[1024];
 	int i = 0;
 	char *id, *name, *addr, *phone;
@@ -50,10 +50,10 @@ void roadData(FILE *fp, Tree *RBT)
 		name = strtok(NULL, "\t");
 		addr = strtok(NULL, "\t");
 		phone = strtok(NULL, "\t");
-		printf("%s %s %s %s\n", id, name, addr, phone);
 
 		// 구조체에 공간 할당, 노드 색상, 부모/자식노드 정보 저장
 		curNode = createMember(RBT);
+		curNode2 = createMember(RBT2);
 
 		// 데이터를 구조체에 저장
 		curNode->id = atoi(id);
@@ -61,9 +61,17 @@ void roadData(FILE *fp, Tree *RBT)
 		strcpy(curNode->addr, addr);
 		strcpy(curNode->phone, phone);
 
+		curNode2->id = atoi(id);
+		strcpy(curNode2->name, name);
+		strcpy(curNode2->addr, addr);
+		strcpy(curNode2->phone, phone);
+
 		// 구조체를 트리에 삽입
 		insertNode(RBT, curNode);
 		treeFixUp(RBT, curNode);
+
+		insertNodeForName(RBT2, curNode2);
+		treeFixUp(RBT2, curNode2);
 	}
 
 	return;
@@ -100,7 +108,7 @@ void menu1_member_view(Tree *tree)
 }
 
 // 메뉴2 : 회원추가
-void menu2_member_add(Tree *tree)
+void menu2_member_add(Tree *tree, Tree *tree2)
 {
 	system("cls");
 
@@ -109,7 +117,7 @@ void menu2_member_add(Tree *tree)
 	int id;
 	char buff[256];
 	char name[10], addr[256], phone[15];
-	Member *newNode;
+	Member *newNode, *newNode2;
 	Member *idIsValid;
 	int phoneIsValid, addrIsValid;
 	int i = 0, j, m, n;
@@ -201,51 +209,311 @@ void menu2_member_add(Tree *tree)
 
 	// 구조체에 공간 할당, 노드 색상, 부모/자식노드 정보 저장
 	newNode = createMember(tree);
+	newNode2 = createMember(tree2);
 
 	// 데이터를 구조체에 저장
 	newNode->id = id;
 	strcpy(newNode->name, name);
 	strcpy(newNode->addr, addr);
 	strcpy(newNode->phone, phone);
+	newNode2->id = id;
+	strcpy(newNode2->name, name);
+	strcpy(newNode2->addr, addr);
+	strcpy(newNode2->phone, phone);
 
 	// 구조체를 트리에 삽입
 	insertNode(tree, newNode);
 	treeFixUp(tree, newNode);
+	insertNodeForName(tree2, newNode2);
+	treeFixUp(tree2, newNode2);
+
+	return;
+}
+
+// 메뉴3 : 회원수정
+void menu3_member_modify(Tree *tree, Tree *tree2)
+{
+	int input, key;
+	char nameKey[256];
+	Member *delMember = NULL;
+	char buff[256];
+	char name[10], addr[256], phone[15];
+	Member *newNode, *newNode2;
+	int phoneIsValid, addrIsValid;
+	int i = 0, j, m, n;
+
+
+	do{
+		system("cls");
+
+		alignCenter("3. 회원 수정\n");
+		printf(WIDTH);
+
+		alignCenter("어떤 키워드로 검색하시겠습니까?\n");
+		alignCenter("1. 아이디검색\n");
+		alignCenter("2. 이름검색\n");
+		alignCenter("0. 종료\n");
+		printf("\t\t\t  : ");
+		scanf("%d", &input);
+
+
+		do
+		{
+			if (input == 0) return;
+
+			if (input == 1)
+			{
+				printf("\t\t\t아이디를 입력하세요\n");
+				printf("\t\t\t  : ");
+				scanf("%d", &key);
+				delMember = searchValue(tree, tree->root, key);
+			}
+			else if (input == 2)
+			{
+				printf("\t\t\t이름을 입력하세요\n");;
+				printf("\t\t\t  : ");
+				scanf("%s", nameKey);
+				delMember = searchValueForName(tree2, tree2->root, nameKey);
+			}
+			if (delMember == NULL)
+			{
+				printf("\n\n");
+				textColor("\t\t\t* 오류 : 키워드를 찾을 수 없습니다.\n\n", 12);
+				alignCenter("1. 아이디검색\n");
+				alignCenter("2. 이름검색\n");
+				alignCenter("0. 종료\n");
+				printf("\t\t\t  : ");
+				scanf("%d", &input);
+			}
+		} while (delMember == NULL);
+
+		printf("\n\n");
+		alignCenter("찾은 회원 정보\n\n");
+		printf("\t\t%d\t%s\t%s\t%s\t\n\n", delMember->id, delMember->name, delMember->addr, delMember->phone);
+		
+
+		// 구조체에 공간 할당, 노드 색상, 부모/자식노드 정보 저장
+		newNode = createMember(tree);
+		newNode2 = createMember(tree2);
+
+		// 기존 데이터 저장
+		newNode->id = delMember->id;
+		newNode2->id = delMember->id;
+		strcpy(newNode->name, delMember->name);
+		strcpy(newNode2->name, delMember->name);
+		strcpy(newNode->addr, delMember->addr);
+		strcpy(newNode2->addr, delMember->addr);
+		strcpy(newNode->phone, delMember->phone);
+		strcpy(newNode2->phone, delMember->phone);
+		
+		printf("\t\t\t어떤 정보를 수정하시겠습니까?\n");
+		alignCenter("1. 이름\n");
+		alignCenter("2. 주소\n");
+		alignCenter("3. 전화번호\n");
+		alignCenter("0. 취소\n");
+		printf("\t\t\t  : ");
+		scanf("%d", &input);
+		if (input == 0) return;
+
+		switch (input)
+		{
+		case 1:
+			// name
+			do{
+				printf("\n");
+				printf("\t\t\t이름 데이터를 수정하십시오\n");;
+				printf("\t\t\t  : ");
+				scanf_s("%s", &buff, 256);
+				if (strlen(buff)>10)	textColor("\t\t\t* 오류 : 이름이 너무 깁니다.\n", 12);
+			} while (strlen(buff)>10);
+			strcpy(name, buff);
+			strcpy(newNode->name, name);
+			strcpy(newNode2->name, name);
+			break;
+
+		case 2:
+			// address
+			do{
+				addrIsValid = 0;
+				printf("\n");
+				printf("\t\t\t주소 데이터를 수정하십시오\n");;
+				printf("\t\t\t  : ");
+				fflush(stdin);
+				strcpy(addr, gets_s(buff, 256));
+
+				while (addr[i] != '\0')
+				{
+					if (addr[i] != ' ')
+					{
+						addrIsValid = 1;
+						break;
+					}
+					i++;
+				}
+
+				if (!addrIsValid) textColor("\t\t\t* 오류 : 주소를 입력하세요.\n", 12);
+			} while (!addrIsValid);
+			strcpy(newNode->addr, addr);
+			strcpy(newNode2->addr, addr);
+			break;
+
+		case 3:
+			// phone number
+			do{
+				phoneIsValid = 1;
+				printf("\n");
+				printf("\t\t\t전화번호 데이터를 수정하십시오(* 000-0000-0000 형식으로 입력하세요)\n");;
+				printf("\t\t\t  : ");
+				scanf_s("%s", &phone, 15);
+
+				n = 0;
+				m = 0;
+				j = 0;
+				while (phoneIsValid == 1 && phone[j] != '\0')
+				{
+					if (phone[j] == '-')
+					{
+						n++;
+						if (m == 0)
+						{
+							phoneIsValid = 0;
+							break;
+						}
+						m = 0;
+					}
+					else if (phone[j] < 48 || phone[j] > 57)
+					{
+						phoneIsValid = 0;
+						break;
+					}
+					else
+					{
+						m++;
+					}
+					j++;
+				}
+				if (n > 2) phoneIsValid = 0;
+
+				if (!phoneIsValid)	textColor("\t\t\t* 오류 : 형식이 올바르지 않습니다.\n", 12);
+
+			} while (!phoneIsValid);
+			break;
+			strcpy(newNode->phone, phone);
+			strcpy(newNode2->phone, phone);
+		case 0:
+			return;
+		}
+
+			// 기존 데이터 삭제
+			key = delMember->id;
+			strcpy(nameKey, delMember->name);
+			delMember = searchValue(tree, tree->root, key);
+			deleteNode(tree, delMember);
+			delMember = searchValueForName(tree2, tree2->root, nameKey);
+			deleteNode(tree2, delMember);
+
+			// 구조체를 트리에 삽입
+			insertNode(tree, newNode);
+			treeFixUp(tree, newNode);
+			insertNodeForName(tree2, newNode2);
+			treeFixUp(tree2, newNode2);
+
+		printf("\n");
+		alignCenter("MENU\n");
+		alignCenter("1. 재실행\n");
+		alignCenter("0. 종료\n");
+
+		alignCenter("버튼을 입력하세요 : ");
+		scanf("%d", &input);
+
+	} while (input != 0);
 
 	return;
 }
 
 
 // 메뉴4 : 회원삭제
-void menu4_member_delete(Tree *tree)
+void menu4_member_delete(Tree *tree, Tree *tree2)
 {
-	int input, id;
-	Member *delMember;
-	system("cls");
+	int input, key;
+	char nameKey[256];
+	Member *delMember = NULL;
 
-	alignCenter("4. 회원 삭제\n");
-	printf(WIDTH);
 
-	printf("\t\t\t아이디\n");;
-	printf("\t\t\t  : ");
-	scanf("%d", &id);
+	do{
+		system("cls");
 
-	delMember = searchValue(tree, tree->root, id);
-	printf("color : %d\n", delMember->color);
-	deleteNode(tree, delMember);
+		alignCenter("4. 회원 삭제\n");
+		printf(WIDTH);
 
-	printf(WIDTH);
-	printf("\n");
-	alignCenter("MENU\n");
-	alignCenter("0. 종료\n");
+		alignCenter("어떤 키워드로 검색하시겠습니까?\n");
+		alignCenter("1. 아이디검색\n");
+		alignCenter("2. 이름검색\n");
+		alignCenter("0. 종료\n");
+		printf("\t\t\t  : ");
+		scanf("%d", &input);
 
-	alignCenter("버튼을 입력하세요 : ");
-	scanf("%d", &input);
-	switch (input)
-	{
-	case 0:
-		return;
-	}
+
+		do
+		{
+			if (input == 0) return;
+
+			if (input == 1)
+			{
+				printf("\t\t\t아이디를 입력하세요\n");
+				printf("\t\t\t  : ");
+				scanf("%d", &key);
+				delMember = searchValue(tree, tree->root, key);
+			}
+			else if (input == 2)
+			{
+				printf("\t\t\t이름을 입력하세요\n");;
+				printf("\t\t\t  : ");
+				scanf("%s", nameKey);
+				delMember = searchValueForName(tree2, tree2->root, nameKey);
+			}
+			if (delMember == NULL)
+			{
+				printf("\n\n");
+				textColor("\t\t\t* 오류 : 키워드를 찾을 수 없습니다.\n\n", 12);
+				alignCenter("1. 아이디검색\n");
+				alignCenter("2. 이름검색\n");
+				alignCenter("0. 종료\n");
+				printf("\t\t\t  : ");
+				scanf("%d", &input);
+			}
+		} while (delMember == NULL);
+
+		printf("\n\n");
+		alignCenter("찾은 회원 정보\n\n");
+		printf("\t\t%d\t%s\t%s\t%s\t\n\n", delMember->id, delMember->name, delMember->addr, delMember->phone);
+		printf("\t\t\t삭제하시겠습니까? (예:1, 아니오:0)\n");
+		printf("\t\t\t  : ");
+		scanf("%d", &input);
+
+		if (input == 1)
+		{
+			key = delMember->id;
+			strcpy(nameKey, delMember->name);
+			delMember = searchValue(tree, tree->root, key);
+			deleteNode(tree, delMember);
+			delMember = searchValueForName(tree2, tree2->root, nameKey);
+			deleteNode(tree2, delMember);
+		}
+		else
+		{
+			alignCenter("사용자가 취소하였습니다.\n");
+		}
+
+		printf("\n");
+		alignCenter("MENU\n");
+		alignCenter("1. 재실행\n");
+		alignCenter("0. 종료\n");
+
+		alignCenter("버튼을 입력하세요 : ");
+		scanf("%d", &input);
+
+	} while (input != 0);
 
 	return;
 }
