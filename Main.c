@@ -37,6 +37,10 @@ int main(void)
 	{
 		system("cls");
 
+<<<<<<< HEAD
+		printf("\n");
+=======
+>>>>>>> 437d1ceccbc6160c54bf5041e32098d6803fea1f
 		alignCenter("시작 화면\n");
 		printf("\n");
 		alignCenter("───────MENU───────\n");
