@@ -13,6 +13,7 @@ void menu1_member_view(Tree *tree);
 void menu2_member_add(Tree *tree, Tree *treeForName);
 void menu3_member_modify(Tree *tree, Tree *treeForName);
 void menu4_member_delete(Tree *tree, Tree *treeForName);
+void menu5_member_search(Tree *tree, Tree *treeForName);
 void menu6_data_save(Tree *tree);
 void menu0_close();
 

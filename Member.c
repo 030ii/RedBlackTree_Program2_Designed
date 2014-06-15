@@ -446,7 +446,13 @@ void menu4_member_delete(Tree *tree, Tree *treeForName)
 			}
 			if (delMember == NULL)
 			{
-				printf("\n\n");
+				system("cls");
+
+				printf("\n");
+				alignCenter("────────────────\n");
+				alignCenter("4. 회원 삭제\n");
+				alignCenter("────────────────\n");
+
 				textColor("\t\t\t\t\t   * 오류 : 키워드를 찾을 수 없습니다.\n\n", 12);
 				alignCenter("1. 아이디검색\n");
 				alignCenter("2. 이름검색\n");
@@ -454,6 +460,10 @@ void menu4_member_delete(Tree *tree, Tree *treeForName)
 				printf("\n");
 				alignCenter("버튼을 입력하세요  : ");
 				scanf("%d", &input);
+				printf("\n");
+				alignCenter("────────────────\n");
+				printf("\n");
+
 			}
 		} while (delMember == NULL);
 
@@ -498,6 +508,94 @@ void menu4_member_delete(Tree *tree, Tree *treeForName)
 
 	return;
 }
+
+
+// 메뉴5 : 회원검색
+void menu5_member_search(Tree *tree, Tree *treeForName)
+{
+	int input, key;
+	char nameKey[256];
+	Node *searchMember = NULL;
+	Member *searchData = NULL;
+
+
+	do{
+		system("cls");
+
+		printf("\n");
+		alignCenter("────────────────\n");
+		alignCenter("5. 회원 검색\n");
+		alignCenter("────────────────\n");
+
+		alignCenter("어떤 키워드로 검색하시겠습니까?\n\n");
+		alignCenter("1. 아이디검색\n");
+		alignCenter("2. 이름검색\n");
+		alignCenter("0. 종료\n\n");
+		alignCenter("버튼을 입력하세요  : ");
+		scanf("%d", &input);
+
+		printf("\n");
+		alignCenter("────────────────\n");
+		printf("\n");
+
+		do
+		{
+			if (input == 0) return;
+
+			if (input == 1)
+			{
+				alignCenter("검색할 아이디를 입력하세요 : ");
+				scanf("%d", &key);
+				searchMember = searchValue(tree, tree->root, key, '\0');
+			}
+			else if (input == 2)
+			{
+				alignCenter("검색할 이름을 입력하세요 : ");
+				scanf("%s", nameKey);
+				searchMember = searchValue(treeForName, treeForName->root, 0, nameKey);
+			}
+			if (searchMember == NULL)
+			{
+				system("cls");
+
+				printf("\n");
+				alignCenter("────────────────\n");
+				alignCenter("5. 회원 검색\n");
+				alignCenter("────────────────\n");
+				textColor("\t\t\t\t\t   * 오류 : 키워드를 찾을 수 없습니다.\n\n", 12);
+				alignCenter("1. 아이디검색\n");
+				alignCenter("2. 이름검색\n");
+				alignCenter("0. 종료\n");
+				printf("\n");
+				alignCenter("버튼을 입력하세요  : ");
+				scanf("%d", &input);
+				printf("\n");
+				alignCenter("────────────────\n");
+				printf("\n");
+			}
+		} while (searchMember == NULL);
+
+		searchData = searchMember->data;
+
+		printf("\n\n");
+		alignCenter("────────────────\n");
+		alignCenter("찾은 회원 정보\n");
+		alignCenter("────────────────\n");
+		printf("\n\t\t\t\t%d\t%s\t%s\t%s\t\n\n", searchData->id, searchData->name, searchData->addr, searchData->phone);
+
+		printf("\n");
+		alignCenter("MENU\n");
+		alignCenter("1. 재실행\n");
+		alignCenter("0. 종료\n");
+
+		alignCenter("버튼을 입력하세요 : ");
+		scanf("%d", &input);
+
+	} while (input != 0);
+
+	return;
+}
+
 
 void menu6_data_save(Tree *tree)
 {

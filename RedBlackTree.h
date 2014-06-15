@@ -44,6 +44,7 @@ void transPlant(Tree *RBT, Node *node, Node *successor);
 void printTree(Tree *RBT, Node *node);	/* 트리 노드 출력 */
 void fprintTree(FILE *fp, Tree *RBT, Node *node);	/* 트리 노드 파일 출력 */
 Node *searchValue(Tree *RBT, Node *node, int id, char name[]); /* 노드 검색 */
+Node *searchEqualValue(Tree *RBT, Node *node, char name[], Node *nodearr[]); /* 중복되는 키워드 노드 검색 */
 int findLastId(Tree *RBT);
 void blackHeight(Tree *RBT, Node *node, int height);
 

@@ -501,6 +501,40 @@ Node *searchValue(Tree *RBT, Node *node, int id, char *name)
 	return node;
 }
 
+// 동일한 키워드 검색
+Node *searchEqualValue(Tree *RBT, Node *node, char *name, Node *nodearr[])
+{
+	int i = 0;
+	// 이름 검색
+	if (name != '\0')
+	{
+		do{
+			while (node != RBT->NIL && strcmp(node->data->name, name) != 0)
+			{
+				if (0 < strcmp(node->data->name, name))
+					node = node->left;
+				else
+					node = node->right;
+			}
+			if (node != RBT->NIL)
+			{
+				nodearr[i] = node;
+				i++;
+				node = node->right;
+			}
+		} while (node != RBT->NIL);
+	}
+	else
+	{
+		nodearr[i] = NULL;
+	}
+
+	if (node == RBT->NIL)
+		nodearr[i] = NULL;
+
+	return nodearr[0];
+}
+
 // 마지막 아이디 찾기
 int findLastId(Tree *RBT)
 {

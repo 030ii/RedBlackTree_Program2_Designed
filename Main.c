@@ -212,7 +212,10 @@ int main(void)
 			menu3_member_modify(RBT, RBT_name);
 			break;
 		case 4:
-			menu4_member_delete(RBT,RBT_name);
+			menu4_member_delete(RBT, RBT_name);
+			break;
+		case 5:
+			menu5_member_search(RBT, RBT_name);
 			break;
 		case 6:
 			menu6_data_save(RBT);
